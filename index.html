@@ -1,0 +1,362 @@
+<!<!DOCTYPE html>
+<html>
+	<head>
+		<title>TP1 - CG 2016/2017</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+
+			#blocker {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0,0,0,0.5);
+			}
+
+			#instructions {
+				/*
+				width: 100%;
+				height: 100%;
+				*/
+				display: -webkit-box;
+				display: -moz-box;
+				display: box;
+				-webkit-box-orient: horizontal;
+				-moz-box-orient: horizontal;
+				box-orient: horizontal;
+				-webkit-box-pack: center;
+				-moz-box-pack: center;
+				box-pack: center;
+				-webkit-box-align: center;
+				-moz-box-align: center;
+				box-align: center;
+				color: #ffffff;
+				text-align: center;
+				cursor: pointer;
+			}
+		</style>
+		<script src="js/api/three.min.js"></script>
+		<script src="js/api/OrbitControls.js"></script>
+		<script src="js/api/controls/KeyboardState.js"></script>
+		<script src="js/api/loaders/DDSLoader.js"></script>
+		<script src="js/api/loaders/MTLLoader.js"></script>
+		<script src="js/api/loaders/OBJLoader.js"></script>
+		<script src="js/app/appObjects.js"></script>
+		<script src="js/app/appLights.js"></script>
+		<script src="js/app/appSkybox.js"></script>
+		<script src="js/app/appControls.js"></script>
+		<script src="js/app/appEngine3D.js"></script>
+	</head>
+<body>
+	<div id="blocker">
+		<div id="instructions">
+			<!--
+			<span style="font-size:40px">Click to play</span>
+			-->
+			<br>(W, A, S, D = Move<!--, SPACE = Jump-->, MOUSE = Look around)
+		</div>
+	</div>
+
+	<script>
+		let app = new Application();
+
+		let objs = [
+			/*
+			*/
+			new Skybox.Dome(
+				'sky', 1750, 60, 60,
+				{x:150, y:0, z:0},
+				{x:0, y:2*Math.PI/3, z:0},
+				'assets/textures/skydome/hdrmaps_com_free_004_tonemapped.jpg'
+			),
+			new Lights.AmbientLight(0x636363, 0.3),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/Luigi_Circuit/",
+					'file': "Luigi_Circuit3",
+				},
+				null, 					// Scale
+				{x:0, y:0, z:0}, 		// Position
+				{ x: 0, y: 0, z: 0 } 	// Rotation
+			),
+			// PointLight
+			new Lights.PointLight(0x0033ff, 3, 150, {x: 76, y: 30, z: 6}),
+			new Lights.PointLight(0x33ff00, 1, 150, {x: -218.71, y: 79.34, z: 13.89}),
+			new Lights.PointLight(0x33ff00, 1, 150, {x: -182.43, y: 68.94, z: 196.34}),
+			new Lights.PointLight(0x33ff00, 1, 150, {x: -97.34, y: 55.57, z: -132.18}),
+			new Lights.PointLight(0x33ff00, 1, 150, {x: 154.54, y: 55.57, z: -202.35}),
+			new Lights.PointLight(0xff0000, 1, 150, {x: 324.95, y: 29.73, z: -38.35}),
+			new Lights.PointLight(0xff0000, 1, 150, {x: 198.18, y: 29.73, z: 46.77}),
+
+			// SpotLight
+			new Lights.SpotLight(
+				{
+					color: 0xffffff,
+					intensity: 1,
+					distance: 200,
+					angle: 20,
+					penumbra: 0
+				},
+				{x: 516.01, y: 96.67, z: 252.91},
+				{x: 320.04, y: 56.24, z: 74.04}
+			),
+			new Lights.SpotLight(
+				{
+					color: 0xffffff,
+					intensity: 1,
+					distance: 200,
+					angle: 20,
+					penumbra: 0,
+				},
+				{x: 517.26, y: 74.33, z: -46.17},
+				{x: 320.04, y: 56.24, z: 74.04}
+			),
+			new Lights.SpotLight(
+				{
+					color: 0xffffff,
+					intensity: 1,
+					distance: 200,
+					angle: 20,
+					penumbra: 0,
+				},
+				{x: 575.10, y: 95.40, z: 101.14},
+				{x: 320.04, y: 56.24, z: 74.04}
+			),
+			new Lights.SpotLight(
+				{
+					color: 0xffffff,
+					intensity: 1,
+					distance: 200,
+					angle: 20,
+					penumbra: 0,
+				},
+				{x: 383.68, y: 78.62, z: 306.48},
+				{x: 320.04, y: 56.24, z: 74.04}
+			),
+			new Lights.SpotLight(
+				{
+					color: 0xffffff,
+					intensity: 1,
+					distance: 200,
+					angle: 20,
+					penumbra: 0
+				},
+				{x: 260.01, y: 100.34, z: 305.32},
+				{x: 220.24, y: 56.24, z: 74.04}
+			),
+			new Lights.SpotLight(
+				{
+					color: 0xffffff,
+					intensity: 1,
+					distance: 200,
+					angle: 20,
+					penumbra: 0,
+				},
+				{x: 152.68, y: 78.14, z: 308.33},
+				{x: 116.10, y: 56.24, z: 74.04}
+			),
+			// Podium
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/space-podium/",
+					'file': "space-podium",
+				},
+				{x: 4, y: 4, z: 4}, 					// Scale
+				{x: 78.12, y: 44.50, z: 6.15}, 		// Position
+				{ x: grausToRadianos(0), y: grausToRadianos(0), z: grausToRadianos(0) } 	// Rotation
+			),
+
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: -16.28, y: 28.29, z: 0}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(30) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 10.52, y: 28.29, z: 77.33}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: -113.24, y: 71.55, z: -133.55}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 186.69, y: 42.68, z: -88.70}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 96.61, y: 46.64, z: -88.70}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 395.62, y: 71.55, z: 44.40}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(-15), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 464.90, y: 32.83, z: 131.44}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 468.75, y: 11.92, z: 109.04}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 332.43, y: 103.10, z: 94.14}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(30), z: grausToRadianos(65) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/player_ship/",
+					'file': "player_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 332.43, y: 54.50, z: 46.38}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(90) } 	// Rotation
+			),
+			// Model 2
+			/////////
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: -20.74, y: 28.29, z: 32.55}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(12) } 	// Rotation
+			),
+			///////////////
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: -23.57, y: 28.29, z: 118.30}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(18) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: -148.84, y: 71.55, z: -74.41}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(65) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 138.14, y: 42.68, z: -88.70}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(30) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 60.65, y: 46.64, z: -59.71}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 321.39, y: 71.55, z: 60.11}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(-15), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+				//{x: 332.43, y: 54.50, z: 9.91}, 		// Position
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 464.90, y: 17.81, z: 131.44}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(38), z: grausToRadianos(35) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 377.01, y: 11.92, z: 182.73}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(15) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 332.43, y: 150.28, z: 130.30}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(30), z: grausToRadianos(65) } 	// Rotation
+			),
+			new Objects.Load.OBJ(
+				{ 						// Model
+					'path': "assets/models/enemy/",
+					'file': "enemy_ship",
+				},
+				{x: 0.16, y: 0.16, z: 0.16}, 					// Scale
+				{x: 78.12, y: 60.50, z: 6.15}, 		// Position
+				{ x: grausToRadianos(-90), y: grausToRadianos(0), z: grausToRadianos(90) } 	// Rotation
+			),
+		];
+		app.add(objs);
+	</script>
+</body>
+</html>

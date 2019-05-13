@@ -1,0 +1,32 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 15.04.2017 02:23:03
+
+newmtl vehicle_playerShip_metal_mat
+	Ns 10.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588235 0.588235 0.588235
+	Kd 1.000000 1.000000 1.000000
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka maps\vehicle_playerShip_orange_dff.png
+	map_Kd maps\vehicle_playerShip_orange_dff.png
+	map_bump maps\Map__0_Normal_Bump.png
+
+newmtl vehicle_playerShip_glass_mat
+	Ns 43.219280
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588235 0.588235 0.588235
+	Kd 1.000000 1.000000 1.000000
+	Ks 0.369000 0.369000 0.369000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka maps\vehicle_playerShip_orange_dff.png
+	map_Kd maps\vehicle_playerShip_orange_dff.png
+	map_bump maps\Map__0_Normal_Bump.png
